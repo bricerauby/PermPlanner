@@ -46,10 +46,10 @@ def import_from_excel(filename, dict_jours):
         if row[0].value == 'Nombre de staffeurs ':
             nombre_de_staffeurs = int(row[1].value)
         if row[0].value == 'Heure de début':
-            jour_debut = dict_jours[row[1].value.replace(' ','')]
+            jour_debut = dict_jours[row[1].value.replace(' ','').capitalize()]
             heure_debut = int(row[2].value.replace(' ','').replace('h',''))
         if row[0].value == 'Heure de fin':
-            jour_fin = dict_jours[row[1].value.replace(' ','')]
+            jour_fin = dict_jours[row[1].value.replace(' ','').capitalize()]
             heure_fin = int(row[2].value.replace(' ','').replace('h',''))
         if row[0].value == 'Responsable de la permanence':
             respo = row[1].value
