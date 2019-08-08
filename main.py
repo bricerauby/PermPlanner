@@ -6,7 +6,9 @@ from perm import *
 from tas_de_perm import *
 import os
 import shutil
-from weasyprint import HTML
+# =============================================================================
+# from weasyprint import HTML
+# =============================================================================
 import time
 
 # A remplir
@@ -382,14 +384,16 @@ temps_export = time.time() - temps_export
 print('exportation terminée')
 print('temps d\'exportation :' + str(temps_export))
 temps_pdf = time.time()
-print("creating pdf...")
-if not os.path.exists('Guide_staffeurs/pdf'):
-    os.mkdir("Guide_staffeurs/pdf")
-for fichier in os.listdir("Guide_staffeurs/html/"):
-    file_name = "Guide_staffeurs/pdf/" + fichier[:-5] + '.pdf'
-    HTML("Guide_staffeurs/html/" + fichier).write_pdf(file_name)
-temps_pdf = time.time() - temps_pdf
-
+# =============================================================================
+# print("creating pdf...")
+# if not os.path.exists('Guide_staffeurs/pdf'):
+#     os.mkdir("Guide_staffeurs/pdf")
+# for fichier in os.listdir("Guide_staffeurs/html/"):
+#     file_name = "Guide_staffeurs/pdf/" + fichier[:-5] + '.pdf'
+#     HTML("Guide_staffeurs/html/" + fichier).write_pdf(file_name)
+# temps_pdf = time.time() - temps_pdf
+# 
+# =============================================================================
 print("temps_import: " + str(temps_import))
 print("temps_calcul: " + str(temps_calcul))
 print("temps_export: " + str(temps_export))
