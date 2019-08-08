@@ -1,0 +1,7 @@
+*.xlsx
+perms/*
+*.pdf
+*.html
+__pycache*
+*.png 
+ 
