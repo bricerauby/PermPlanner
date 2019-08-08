@@ -25,7 +25,7 @@ file_staff = file_de_staffeur(
     'main')  # on utlise pas le domaine pour le moment (c'est utile si on veut separer en plusieurs domaine: perm
 # secu perm acti etc)
 staff_file = openpyxl.load_workbook(filename='Liste_Staffeurs.xlsx', read_only=True)
-ws = staff_file['Feuil1']
+ws = staff_file.active
 ws.guess_types = False
 for row in ws.rows:
     champs = []
