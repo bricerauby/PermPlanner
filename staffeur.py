@@ -6,7 +6,7 @@ class Staffeur:
     def __init__(self, nom, prenom, fiabilite, assos, competence, tel=None):
         self.nom = nom
         self.prenom = prenom
-        self.fiabilite = fiabilite
+        self.fiabilite = int(fiabilite)
         self.assos = assos
         self.heure_dispo = 0
         self.competence = competence

@@ -32,12 +32,13 @@ for row in ws.rows:
     for cell in row:
         if len(champs) < 6:
             champs.append(cell.value)
-    staff = Staffeur(*champs)
-    if staff.competence is None:
-        staff.competence = ""
-    if champs[0] is not None and champs[0] != "Nom":
-        staff.competence = staff.competence.split()
-        file_staff.ajout_staffeur(staff)
+    if champs[0] != 'Nom':            
+        staff = Staffeur(*champs)
+        if staff.competence is None:
+            staff.competence = ""
+        if champs[0] is not None and champs[0] != "Nom":
+            staff.competence = staff.competence.split()
+            file_staff.ajout_staffeur(staff)
 # bloc initialisation heure de perm
 tas_perm = Tas_De_Perm('main')
 for file_name in os.listdir('perms'):
@@ -54,7 +55,6 @@ heure_debut = tas_perm.perms[0].heure
 perms_attribuees = []
 while tas_perm.perms:
     perms_courantes = tas_perm.get_one_hour()
-    print(perms_courantes)
     check = False
     i_max = len(perms_courantes)
     perms_restantes = []
