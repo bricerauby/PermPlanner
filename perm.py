@@ -60,7 +60,12 @@ def import_from_excel(filename, dict_jours):
         if row[0].value == 'Fiabilité nécessaire du staffeur':
             sensibilite = int(row[1].value)
         if row[0].value == 'Compétence requise':
-            competence_requise = row[1].value
+            if row[1].value is not None :
+                competence_requise = row[1].value.replace('/','')
+                if competence_requise == '': 
+                    competence_requise = None
+            else: 
+                competence_requise = row[1].value
         if row[0].value == 'Pénibilité':
             penibilite = int(row[1].value)
         if row[0].value == 'Matériel fournis':

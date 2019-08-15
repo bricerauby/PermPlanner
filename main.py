@@ -6,10 +6,9 @@ from perm import *
 from tas_de_perm import *
 import os
 import shutil
-# =============================================================================
-# from weasyprint import HTML
-# =============================================================================
+from weasyprint import HTML
 import time
+import unidecode
 
 # A remplir
 premier_jour = 'Vendredi'
@@ -32,13 +31,12 @@ for row in ws.rows:
     for cell in row:
         if len(champs) < 6:
             champs.append(cell.value)
-    if champs[0] != 'Nom':            
+    if champs[0] is not None and champs[0] != "Nom":
         staff = Staffeur(*champs)
-        if staff.competence is None:
+        if staff.competence is None :
             staff.competence = ""
-        if champs[0] is not None and champs[0] != "Nom":
-            staff.competence = staff.competence.split()
-            file_staff.ajout_staffeur(staff)
+        staff.competence = staff.competence.replace('/','').split()
+        file_staff.ajout_staffeur(staff)
 # bloc initialisation heure de perm
 tas_perm = Tas_De_Perm('main')
 for file_name in os.listdir('perms'):
@@ -314,11 +312,11 @@ for staffeur in file_staff.staffeurs:
             fichier_html.write('<h1> ' + str(perm_to_write.nom) + ' </h1> ')
             if perm_to_write.image:
                 shutil.copyfile(perm_to_write.image,
-                                "Guide_staffeurs/images/" + str(perm_to_write.nom.replace(' ', '_') + '.png'))
+                                "Guide_staffeurs/images/" + unidecode.unidecode(str(perm_to_write.nom.replace(' ', '_').replace('.', '_') + '.png')))
                 fichier_html.write('<div class ="plan"> '
                                    '<h2> Lieu de la permanence : </h2>'
                                    '<img src="' + "../images/" + str(
-                    perm_to_write.nom.replace(' ', '_') + '.png') + '" alt="plan_perm"> '
+                    unidecode.unidecode(perm_to_write.nom.replace(' ', '_').replace('.','')) + '.png') + '" alt="plan_perm"> '
                                                                     '</div>')
             fichier_html.write(' <table> <tr> <td>Heure de début</td>  <td>' +
                                str(jours[(perm_to_write.heure // 10000) % 7] + ' : ' + str(
@@ -384,16 +382,16 @@ temps_export = time.time() - temps_export
 print('exportation terminée')
 print('temps d\'exportation :' + str(temps_export))
 temps_pdf = time.time()
-# =============================================================================
-# print("creating pdf...")
-# if not os.path.exists('Guide_staffeurs/pdf'):
-#     os.mkdir("Guide_staffeurs/pdf")
-# for fichier in os.listdir("Guide_staffeurs/html/"):
-#     file_name = "Guide_staffeurs/pdf/" + fichier[:-5] + '.pdf'
-#     HTML("Guide_staffeurs/html/" + fichier).write_pdf(file_name)
-# temps_pdf = time.time() - temps_pdf
-# 
-# =============================================================================
+
+    
+print("creating pdf...")
+if not os.path.exists('Guide_staffeurs/pdf'):
+    os.mkdir("Guide_staffeurs/pdf")
+for fichier in os.listdir("Guide_staffeurs/html/"):
+    file_name = "Guide_staffeurs/pdf/" + fichier[:-5] + '.pdf'
+    HTML("Guide_staffeurs/html/" + fichier).write_pdf(file_name)
+temps_pdf = time.time() - temps_pdf
+
 print("temps_import: " + str(temps_import))
 print("temps_calcul: " + str(temps_calcul))
 print("temps_export: " + str(temps_export))
