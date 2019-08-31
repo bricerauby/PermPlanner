@@ -1,5 +1,5 @@
-from typing import TextIO
-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from file_de_staffeur import *
 from staffeur import Staffeur
 from perm import *
@@ -8,8 +8,9 @@ import os
 import shutil
 from weasyprint import HTML
 import time
-import unidecode
-
+import codecs 
+from typing import TextIO
+import tqdm
 # A remplir
 premier_jour = 'Vendredi'
 
@@ -31,7 +32,7 @@ for row in ws.rows:
     for cell in row:
         if len(champs) < 6:
             champs.append(cell.value)
-    if champs[0] is not None and champs[0] != "Nom":
+    if len(champs)>0 and champs[0] is not None and champs[0] != "Nom":
         staff = Staffeur(*champs)
         if staff.competence is None :
             staff.competence = ""
@@ -51,6 +52,7 @@ print('temps d\'initialisation: ' + str(temps_import))
 temps_calcul = time.time()
 heure_debut = tas_perm.perms[0].heure
 perms_attribuees = []
+print('début attribution ...')
 while tas_perm.perms:
     perms_courantes = tas_perm.get_one_hour()
     check = False
@@ -156,7 +158,7 @@ sht = perms_pour_staffeurs_wb.active
 heure_fin = 0
 row = 2
 temps_export = time.time()
-for j in file_staff.staffeurs:
+for j in tqdm.tqdm(file_staff.staffeurs):
     col = 1
     sht.cell(column=1, row=row, value=j.nom + ' ' + j.prenom)
     heure_colonne = heure_debut
@@ -204,7 +206,7 @@ while heure_colonne <= heure_fin:
 
 perms_pour_staffeurs_wb.save('perms_pour_staffeurs.xlsx')
 
-print('perm pour staff terminé')
+print('perm pour staff fini')
 
 # on recupere toutes les perms qui ont le meme nom et on les groupe sur une ligne
 perms = []
@@ -219,7 +221,7 @@ for p in perms_attribuees:
 staffeurs_pour_perms_wb = openpyxl.Workbook()
 sht = staffeurs_pour_perms_wb.active
 row = 2
-for p in perms:
+for p in tqdm.tqdm(perms):
     col = 1
     sht.cell(column=col, row=row, value=p[0].nom)
     col += 1
@@ -269,7 +271,7 @@ while heure_colonne <= heure_fin:
         heure_colonne += 100
 
 staffeurs_pour_perms_wb.save('staffeurs_pour_perms.xlsx')
-print('staffeurs_pour_perms terminé')
+print('staffeurs_pour_perms fini')
 
 # creation des carnets de staff
 if not os.path.exists("Guide_staffeurs"):
@@ -279,10 +281,10 @@ if not os.path.exists("Guide_staffeurs/html"):
 if not os.path.exists("Guide_staffeurs/images"):
     os.mkdir("Guide_staffeurs/images")
 
-for staffeur in file_staff.staffeurs:
-    with open('Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
-                                                                                                                '') + ".html",
-              "w") as fichier_html:
+for staffeur in tqdm.tqdm(file_staff.staffeurs):
+    with codecs.open('Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
+                                                                                                                    '') + ".html",
+        "w", encoding='utf8') as fichier_html:
         fichier_html.write("<!DOCTYPE html> "
                            "<html> "
                            "<head>"
@@ -299,25 +301,22 @@ for staffeur in file_staff.staffeurs:
                            'class="pdg"> Carnet de staff de ' + str(staffeur.prenom) + " " + str(
             staffeur.nom) + '</h2> </div> </div> '
                             '</div>')
-    perm_to_write: object
     ind = 1
     for perm_to_write in staffeur.affectation:
-        fichier_html: TextIO
-        with open('Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
+        with codecs.open('Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
                                                                                                                     '') + ".html",
-                  "a") as fichier_html:
+                  "a", encoding='utf8') as fichier_html:
 
             if ind < len(staffeur.affectation):
                 fichier_html.write('<div class="page"> ')
-            fichier_html.write('<h1> ' + str(perm_to_write.nom) + ' </h1> ')
+            fichier_html.write('<h1> ' + perm_to_write.nom + ' </h1> ')
             if perm_to_write.image:
                 shutil.copyfile(perm_to_write.image,
-                                "Guide_staffeurs/images/" + unidecode.unidecode(str(perm_to_write.nom.replace(' ', '_').replace('.', '_') + '.png')))
+                                "Guide_staffeurs/images/" + str(perm_to_write.nom.replace(' ', '_').replace('.', '_') + '.png'))
                 fichier_html.write('<div class ="plan"> '
                                    '<h2> Lieu de la permanence : </h2>'
                                    '<img src="' + "../images/" + str(
-                    unidecode.unidecode(perm_to_write.nom.replace(' ', '_').replace('.','')) + '.png') + '" alt="plan_perm"> '
-                                                                    '</div>')
+                    perm_to_write.nom.replace(' ', '_').replace('.','')) + '.png' + '" alt="plan_perm"> </div>')
             fichier_html.write(' <table> <tr> <td>Heure de début</td>  <td>' +
                                str(jours[(perm_to_write.heure // 10000) % 7] + ' : ' + str(
                                    (
@@ -346,7 +345,6 @@ for staffeur in file_staff.staffeurs:
                     fichier_html.write(
                         '<td>' + perm_to_write.coperms[i].affectation.nom + ' ' + perm_to_write.coperms[
                             i].affectation.prenom + '</td> </tr>') #'(' + perm_to_write.coperms[i].affectation.tel + ')</td> </tr>')
-                    print(perm_to_write.coperms[i].affectation.tel)
                 except TypeError:
                     print('erreur')
                     print(perm_to_write.nom)
@@ -379,15 +377,15 @@ with open('Guide_staffeurs/style.css', 'w') as style_file:
 with open('Guide_staffeurs/impression.css', 'w') as impression_file:
     impression_file.write('.page {page-break-after:always;}')
 temps_export = time.time() - temps_export
-print('exportation terminée')
+print('exportation fini')
 print('temps d\'exportation :' + str(temps_export))
 temps_pdf = time.time()
 
-    
+
 print("creating pdf...")
 if not os.path.exists('Guide_staffeurs/pdf'):
     os.mkdir("Guide_staffeurs/pdf")
-for fichier in os.listdir("Guide_staffeurs/html/"):
+for fichier in tqdm.tqdm(os.listdir("Guide_staffeurs/html/")):
     file_name = "Guide_staffeurs/pdf/" + fichier[:-5] + '.pdf'
     HTML("Guide_staffeurs/html/" + fichier).write_pdf(file_name)
 temps_pdf = time.time() - temps_pdf

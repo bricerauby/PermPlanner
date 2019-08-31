@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import openpyxl
 import os
 
@@ -37,45 +39,44 @@ def import_from_excel(filename, dict_jours):
     perm_file = openpyxl.load_workbook(filename=filename, read_only=True)
     ws = perm_file.active
     im_path = None
-    print(image_path)
     if os.path.exists(image_path):
         im_path = image_path
     name = filename[:-5].split('/')[-1]
     competence_requise = None
     for row in ws.iter_rows():
-        if row[0].value == 'Nombre de staffeurs ':
-            nombre_de_staffeurs = int(row[1].value)
-        if row[0].value == 'Heure de début':
-            jour_debut = dict_jours[row[1].value.replace(' ','').capitalize()]
-            heure_debut = int(row[2].value.replace(' ','').replace('h',''))
-        if row[0].value == 'Heure de fin':
-            jour_fin = dict_jours[row[1].value.replace(' ','').capitalize()]
-            heure_fin = int(row[2].value.replace(' ','').replace('h',''))
-        if row[0].value == 'Responsable de la permanence':
-            respo = row[1].value
-        if row[0].value == 'Numéro du responsable':
-            num_respo = row[1].value
-        if row[0].value == 'Prérequis':
-            prerequis = row[1].value
-        if row[0].value == 'Fiabilité nécessaire du staffeur':
-            sensibilite = int(row[1].value)
-        if row[0].value == 'Compétence requise':
-            if row[1].value is not None :
-                competence_requise = row[1].value.replace('/','')
-                if competence_requise == '': 
-                    competence_requise = None
-            else: 
-                competence_requise = row[1].value
-        if row[0].value == 'Pénibilité':
-            penibilite = int(row[1].value)
-        if row[0].value == 'Matériel fournis':
-            materiel = row[1].value
-        if row[0].value == 'Description':
-            description = row[1].value
+        if len(row)>0 :
+            if row[0].value == 'Nombre de staffeurs ':
+                nombre_de_staffeurs = int(row[1].value)
+            if row[0].value == 'Heure de début':
+                jour_debut = dict_jours[row[1].value.replace(' ','').capitalize()]
+                heure_debut = int(row[2].value.replace(' ','').replace('h',''))
+            if row[0].value == 'Heure de fin':
+                jour_fin = dict_jours[row[1].value.replace(' ','').capitalize()]
+                heure_fin = int(row[2].value.replace(' ','').replace('h',''))
+            if row[0].value == 'Responsable de la permanence':
+                respo = row[1].value
+            if row[0].value == 'Numéro du responsable':
+                num_respo = row[1].value
+            if row[0].value == 'Prérequis':
+                prerequis = row[1].value
+            if row[0].value == 'Fiabilité nécessaire du staffeur':
+                sensibilite = int(row[1].value)
+            if row[0].value == 'Compétence requise':
+                if row[1].value is not None :
+                    competence_requise = row[1].value.replace('/','')
+                    if competence_requise == '': 
+                        competence_requise = None
+                else: 
+                    competence_requise = row[1].value
+            if row[0].value == 'Pénibilité':
+                penibilite = int(row[1].value)
+            if row[0].value == 'Matériel fournis':
+                materiel = row[1].value
+            if row[0].value == 'Description':
+                description = row[1].value
     perms = []
     jour = jour_debut
     heure = heure_debut
-    print(competence_requise)
     while (jour == jour_fin and heure < heure_fin) or jour < jour_fin:
         coperms = []
         for i in range(nombre_de_staffeurs):
