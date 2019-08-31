@@ -13,6 +13,4 @@ ADD  ./*.py /app/
 ADD ./perms /app/perms
 ADD ./logo.png /app/
 ADD ./Liste_Staffeurs.xlsx /app/
-WORKDIR /app
-CMD python3 main.py
- 
+WORKDIR /app 
