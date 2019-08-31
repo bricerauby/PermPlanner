@@ -351,12 +351,19 @@ for staffeur in tqdm.tqdm(file_staff.staffeurs):
                     print(perm_to_write.coperms[i].affectation.nom)
                     print(perm_to_write.coperms[i].affectation.prenom)
                     print(perm_to_write.coperms[i].affectation.tel)
-            fichier_html.write(
+            try :
+                fichier_html.write(
                 '<tr> <td>Materiel Forunis</td> <td> ' + perm_to_write.materiel + '</td> </tr> </table> <div '
                                                                                   'class="description"> '
                                                                                   '<h2>Description :</h2> <p> ' +
                 str(
                     perm_to_write.description) + '</p> </div>')
+            except TypeError:
+                    print('erreur')
+                    print(perm_to_write.nom)
+                    print(perm_to_write.coperms[i].affectation.nom)
+                    print(perm_to_write.coperms[i].affectation.prenom)
+                    print(perm_to_write.coperms[i].affectation.tel)
             if ind < len(staffeur.affectation):
                 fichier_html.write('</div>')
         ind += 1
