@@ -24,7 +24,7 @@ temps_import = time.time()
 file_staff = file_de_staffeur(
     'main')  # on utlise pas le domaine pour le moment (c'est utile si on veut separer en plusieurs domaine: perm
 # secu perm acti etc)
-staff_file = openpyxl.load_workbook(filename='Liste_Staffeurs.xlsx', read_only=True)
+staff_file = openpyxl.load_workbook(filename='data/Liste_Staffeurs.xlsx', read_only=True)
 ws = staff_file.active
 ws.guess_types = False
 for row in ws.rows:
@@ -40,9 +40,9 @@ for row in ws.rows:
         file_staff.ajout_staffeur(staff)
 # bloc initialisation heure de perm
 tas_perm = Tas_De_Perm('main')
-for file_name in os.listdir('perms'):
+for file_name in os.listdir('data/perms'):
     if file_name[-5:] == '.xlsx':
-        perms = import_from_excel(os.path.join('perms', file_name), dict_jours)
+        perms = import_from_excel(os.path.join('data/perms', file_name), dict_jours)
         for i in perms:
             tas_perm.ajoute_perm(i)
 temps_import = time.time() - temps_import
@@ -204,7 +204,7 @@ while heure_colonne <= heure_fin:
     else:
         heure_colonne += 100
 
-perms_pour_staffeurs_wb.save('perms_pour_staffeurs.xlsx')
+perms_pour_staffeurs_wb.save('data/perms_pour_staffeurs.xlsx')
 
 print('perm pour staff fini')
 
@@ -270,19 +270,19 @@ while heure_colonne <= heure_fin:
     else:
         heure_colonne += 100
 
-staffeurs_pour_perms_wb.save('staffeurs_pour_perms.xlsx')
+staffeurs_pour_perms_wb.save('data/staffeurs_pour_perms.xlsx')
 print('staffeurs_pour_perms fini')
 
 # creation des carnets de staff
-if not os.path.exists("Guide_staffeurs"):
-    os.mkdir("Guide_staffeurs")
-if not os.path.exists("Guide_staffeurs/html"):
-    os.mkdir("Guide_staffeurs/html")
-if not os.path.exists("Guide_staffeurs/images"):
-    os.mkdir("Guide_staffeurs/images")
+if not os.path.exists("data/Guide_staffeurs"):
+    os.mkdir("data/Guide_staffeurs")
+if not os.path.exists("data/Guide_staffeurs/html"):
+    os.mkdir("data/Guide_staffeurs/html")
+if not os.path.exists("data/Guide_staffeurs/images"):
+    os.mkdir("data/Guide_staffeurs/images")
 
 for staffeur in tqdm.tqdm(file_staff.staffeurs):
-    with codecs.open('Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
+    with codecs.open('data/Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
                                                                                                                     '') + ".html",
         "w", encoding='utf8') as fichier_html:
         fichier_html.write("<!DOCTYPE html> "
@@ -303,7 +303,7 @@ for staffeur in tqdm.tqdm(file_staff.staffeurs):
                             '</div>')
     ind = 1
     for perm_to_write in staffeur.affectation:
-        with codecs.open('Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
+        with codecs.open('data/Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
                                                                                                                     '') + ".html",
                   "a", encoding='utf8') as fichier_html:
 
@@ -312,7 +312,7 @@ for staffeur in tqdm.tqdm(file_staff.staffeurs):
             fichier_html.write('<h1> ' + perm_to_write.nom + ' </h1> ')
             if perm_to_write.image:
                 shutil.copyfile(perm_to_write.image,
-                                "Guide_staffeurs/images/" + str(perm_to_write.nom.replace(' ', '_').replace('.', '_') + '.png'))
+                                "data/Guide_staffeurs/images/" + str(perm_to_write.nom.replace(' ', '_').replace('.', '_') + '.png'))
                 fichier_html.write('<div class ="plan"> '
                                    '<h2> Lieu de la permanence : </h2>'
                                    '<img src="' + "../images/" + str(
@@ -365,11 +365,11 @@ for staffeur in tqdm.tqdm(file_staff.staffeurs):
             if ind < len(staffeur.affectation):
                 fichier_html.write('</div>')
         ind += 1
-with open('Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
+with open('data/Guide_staffeurs/html/' + str(staffeur.nom).replace(' ', '') + '_' + str(staffeur.prenom).replace(' ',
                                                                                                             '') + ".html",
           "a") as fichier_html:
     fichier_html.write('</body> </html>')
-with open('Guide_staffeurs/style.css', 'w') as style_file:
+with open('data/Guide_staffeurs/style.css', 'w') as style_file:
     style_file.write('h1 {	text-align: center;	margin: auto;	margin-bottom: 30px;} .plan > h2,img{	margin: '
                      'auto;	width: auto;} .plan >h2 {text-align: center;} .plan >img { display: block; margin-left: '
                      'auto; margin-right: auto;    width: 50%;  } .plan { 	margin-bottom: 30px; } table{    '
@@ -379,7 +379,7 @@ with open('Guide_staffeurs/style.css', 'w') as style_file:
                      'opacity: 0.3;    z-index: -1; } td{    border: 1px solid black;    padding: 5px ;} .description '
                      '{	width : 65%;	margin:auto;} .page {	margin-bottom: 100px;} '
                      )
-with open('Guide_staffeurs/impression.css', 'w') as impression_file:
+with open('data/Guide_staffeurs/impression.css', 'w') as impression_file:
     impression_file.write('.page {page-break-after:always;}')
 temps_export = time.time() - temps_export
 print('exportation fini')
@@ -388,11 +388,11 @@ temps_pdf = time.time()
 
 
 print("creating pdf...")
-if not os.path.exists('Guide_staffeurs/pdf'):
-    os.mkdir("Guide_staffeurs/pdf")
-for fichier in tqdm.tqdm(os.listdir("Guide_staffeurs/html/")):
-    file_name = "Guide_staffeurs/pdf/" + fichier[:-5] + '.pdf'
-    HTML("Guide_staffeurs/html/" + fichier).write_pdf(file_name)
+if not os.path.exists('data/Guide_staffeurs/pdf'):
+    os.mkdir("data/Guide_staffeurs/pdf")
+for fichier in tqdm.tqdm(os.listdir("data/Guide_staffeurs/html/")):
+    file_name = "data/Guide_staffeurs/pdf/" + fichier[:-5] + '.pdf'
+    HTML("data/Guide_staffeurs/html/" + fichier).write_pdf(file_name)
 temps_pdf = time.time() - temps_pdf
 
 print("temps_import: " + str(temps_import))

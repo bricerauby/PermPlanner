@@ -4,4 +4,4 @@ perms/*
 *.html
 __pycache*
 *.png 
- 
+data/*

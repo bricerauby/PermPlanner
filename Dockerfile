@@ -10,7 +10,5 @@ RUN apt install -y  build-essential python3-dev python3-pip python3-setuptools p
 
 RUN pip3 install weasyprint openpyxl tqdm
 ADD  ./*.py /app/
-ADD ./perms /app/perms
-ADD ./logo.png /app/
-ADD ./Liste_Staffeurs.xlsx /app/
+ADD ./data /app/data
 WORKDIR /app 
