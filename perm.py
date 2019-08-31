@@ -36,6 +36,7 @@ class Perm:
 def import_from_excel(filename, dict_jours):
     # function that return a list of perm for an excel file
     image_path = filename[:-5] + '.png'
+    print(image_path)
     perm_file = openpyxl.load_workbook(filename=filename, read_only=True)
     ws = perm_file.active
     im_path = None
