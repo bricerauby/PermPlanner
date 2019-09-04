@@ -12,3 +12,4 @@ RUN pip3 install weasyprint openpyxl tqdm
 ADD  ./*.py /app/
 ADD ./data /app/data
 WORKDIR /app 
+

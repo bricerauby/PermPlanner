@@ -316,7 +316,7 @@ for staffeur in tqdm.tqdm(file_staff.staffeurs):
                 fichier_html.write('<div class ="plan"> '
                                    '<h2> Lieu de la permanence : </h2>'
                                    '<img src="' + "../images/" + str(
-                    perm_to_write.nom.replace(' ', '_').replace('.','')) + '.png' + '" alt="plan_perm"> </div>')
+                    perm_to_write.nom.replace(' ', '_').replace('.','_')) + '.png' + '" alt="plan_perm"> </div>')
             fichier_html.write(' <table> <tr> <td>Heure de début</td>  <td>' +
                                str(jours[(perm_to_write.heure // 10000) % 7] + ' : ' + str(
                                    (
